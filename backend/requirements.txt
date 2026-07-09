@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+python-dotenv==1.0.1
+httpx==0.28.1
+chromadb==0.6.3
+posthog<3.0.0  # pin: chromadb 0.6.3 calls posthog.capture() with the 2.x signature; 3.x breaks telemetry with "capture() takes 1 positional argument"
+pypdf==5.1.0
+python-docx==1.1.2
+pydantic==2.10.4
+pydantic-settings==2.7.1

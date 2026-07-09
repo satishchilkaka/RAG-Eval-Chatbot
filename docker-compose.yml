@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: rag-eval-backend
+    env_file:
+      - .env
+    environment:
+      - ROOT_DIR=/app
+      - ANONYMIZED_TELEMETRY=False
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    volumes:
+      - ./data/uploads:/app/data/uploads
+      - ./data/chroma:/app/data/chroma
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: rag-eval-frontend
+    ports:
+      - "3080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

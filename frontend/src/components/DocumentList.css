@@ -1,0 +1,62 @@
+.doc-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doc-list.empty {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.doc-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.doc-name {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-meta {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}

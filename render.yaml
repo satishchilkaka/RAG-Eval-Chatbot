@@ -1,0 +1,43 @@
+services:
+  # FastAPI backend, built from backend/Dockerfile.
+  - type: web
+    name: rag-eval-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: ROOT_DIR
+        value: /app
+      - key: ANONYMIZED_TELEMETRY
+        value: "false"
+      # Paste your Groq key here after the service is created
+      # (console.groq.com/keys), or set it in the Render dashboard.
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: LLM_MODEL
+        value: llama-3.3-70b-versatile
+      # After the frontend service is created, set this to its URL, e.g.
+      # https://rag-eval-frontend.onrender.com, then redeploy this service.
+      - key: EXTRA_CORS_ORIGINS
+        sync: false
+
+  # React frontend, built as a static site (free, no spin-down).
+  - type: web
+    runtime: static
+    name: rag-eval-frontend
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      # After the backend service is created, set this to its URL, e.g.
+      # https://rag-eval-backend.onrender.com, then trigger a manual
+      # redeploy of this static site (env changes require a rebuild).
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
