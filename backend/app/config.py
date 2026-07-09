@@ -47,11 +47,14 @@ class Settings(BaseSettings):
 
     # Comma-separated list of additional allowed origins, e.g. a deployed
     # frontend URL: "https://rag-eval-frontend.onrender.com"
-    extra_cors_origins: Annotated[list[str], NoDecode] = ["https://rag-eval-frontend.onrender.com", "https://rag-eval-backend-619f.onrender.com"]
+    extra_cors_origins: Annotated[list[str], NoDecode] = []
 
-    @field_validator("cors_origins", mode="before")
+    # Same NoDecode treatment as cors_origins above, applied to both fields:
+    # accept either a JSON array or a plain comma-separated string from the
+    # env, instead of pydantic-settings crashing on non-JSON input.
+    @field_validator("cors_origins", "extra_cors_origins", mode="before")
     @classmethod
-    def _parse_cors_origins(cls, value):
+    def _parse_origins_list(cls, value):
         if isinstance(value, str):
             stripped = value.strip()
             if stripped.startswith("["):
@@ -64,8 +67,7 @@ class Settings(BaseSettings):
 
     @property
     def all_cors_origins(self) -> list[str]:
-        extra = [o.strip() for o in self.extra_cors_origins.split(",") if o.strip()]
-        return self.cors_origins + extra
+        return self.cors_origins + self.extra_cors_origins
 
 
 settings = Settings()
