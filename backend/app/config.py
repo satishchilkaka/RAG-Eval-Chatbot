@@ -1,7 +1,10 @@
+import json
 import os
 from pathlib import Path
+from typing import Annotated
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 ROOT_DIR = Path(os.getenv("ROOT_DIR", str(Path(__file__).resolve().parents[2])))
 
@@ -28,7 +31,12 @@ class Settings(BaseSettings):
     chroma_dir: Path = ROOT_DIR / "data" / "chroma"
     collection_name: str = "documents"
 
-    cors_origins: list[str] = [
+    # NoDecode stops pydantic-settings from trying to JSON-decode this env
+    # var itself (its default behavior for list-typed fields, which raises
+    # a hard SettingsError — and crashes the whole app at startup — if the
+    # value isn't valid JSON). Our own validator below handles both JSON
+    # arrays and plain comma-separated strings.
+    cors_origins: Annotated[list[str], NoDecode] = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
@@ -36,8 +44,23 @@ class Settings(BaseSettings):
         "http://localhost:3080",
         "http://127.0.0.1:3080",
     ]
-  
+
+    # Comma-separated list of additional allowed origins, e.g. a deployed
+    # frontend URL: "https://rag-eval-frontend.onrender.com"
     extra_cors_origins: str = "https://rag-eval-frontend.onrender.com"
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _parse_cors_origins(cls, value):
+        if isinstance(value, str):
+            stripped = value.strip()
+            if stripped.startswith("["):
+                try:
+                    return json.loads(stripped)
+                except json.JSONDecodeError:
+                    pass
+            return [o.strip() for o in stripped.split(",") if o.strip()]
+        return value
 
     @property
     def all_cors_origins(self) -> list[str]:
