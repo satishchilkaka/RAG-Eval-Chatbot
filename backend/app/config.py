@@ -47,7 +47,7 @@ class Settings(BaseSettings):
 
     # Comma-separated list of additional allowed origins, e.g. a deployed
     # frontend URL: "https://rag-eval-frontend.onrender.com"
-    extra_cors_origins: str = "https://rag-eval-frontend.onrender.com"
+    extra_cors_origins: Annotated[list[str], NoDecode] = ["https://rag-eval-frontend.onrender.com", "https://rag-eval-backend-619f.onrender.com"]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
