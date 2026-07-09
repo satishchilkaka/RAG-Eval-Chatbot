@@ -31,3 +31,8 @@ async def health():
         documents_indexed=rag.get_document_count(),
         model=settings.llm_model,
     )
+
+@app.get("/")
+@app.head("/")
+async def root():
+    return {"status": "ok"}
