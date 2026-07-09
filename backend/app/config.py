@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     )
 
     # Generic OpenAI-compatible LLM config. Defaults to Groq's free tier
-    # (no credit card needed): https://console.groq.com/keys
+
     llm_api_key: str = ""
     llm_base_url: str = "https://api.groq.com/openai/v1"
     llm_model: str = "llama-3.3-70b-versatile"
@@ -36,9 +36,8 @@ class Settings(BaseSettings):
         "http://localhost:3080",
         "http://127.0.0.1:3080",
     ]
-    # Comma-separated list of additional allowed origins, e.g. a deployed
-    # frontend URL: "https://rag-eval-frontend.onrender.com"
-    extra_cors_origins: str = ""
+  
+    extra_cors_origins: str = "https://rag-eval-frontend.onrender.com"
 
     @property
     def all_cors_origins(self) -> list[str]:

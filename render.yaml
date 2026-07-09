@@ -6,7 +6,6 @@ services:
     plan: free
     dockerfilePath: ./backend/Dockerfile
     dockerContext: .
-    healthCheckPath: /api/health
     envVars:
       - key: ROOT_DIR
         value: /app
