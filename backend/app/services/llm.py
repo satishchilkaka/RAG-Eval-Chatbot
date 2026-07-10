@@ -16,7 +16,15 @@ async def generate_answer(question: str, context: str) -> str:
     system_prompt = (
         "You are a helpful assistant that answers questions based only on the "
         "provided document context. If the answer is not in the context, say "
-        "you don't have enough information. Be concise and cite relevant details."
+        "you don't have enough information. Be concise and cite relevant details.\n\n"
+        "Format every response in clean Markdown so it renders well in a chat UI:\n"
+        "- Use short paragraphs (2-3 sentences max) instead of one dense block of text.\n"
+        "- Use bullet or numbered lists for multiple points, steps, or items.\n"
+        "- Use **bold** for key terms, names, and numbers worth calling out.\n"
+        "- Use a `##` or `###` heading only if the answer has multiple distinct sections.\n"
+        "- Use a fenced code block for any code, config, or file content.\n"
+        "Do not force structure onto a simple one-line answer — plain prose is fine "
+        "when the question only needs a short direct answer."
     )
     user_prompt = (
         f"Context from uploaded documents:\n\n{context}\n\n"

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { Message } from "../App";
 import "./ChatInterface.css";
 
@@ -60,7 +62,15 @@ export function ChatInterface({ messages, onAsk, loading, hasDocuments }: Props)
         {messages.map((msg) => (
           <div key={msg.id} className={`message ${msg.role}`}>
             <div className="bubble">
-              <p>{msg.content}</p>
+              {msg.role === "assistant" ? (
+                <div className="markdown">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p>{msg.content}</p>
+              )}
               {msg.role === "assistant" && msg.sources && msg.sources.length > 0 && (
                 <details className="sources">
                   <summary>
@@ -71,7 +81,10 @@ export function ChatInterface({ messages, onAsk, loading, hasDocuments }: Props)
                   <ul>
                     {msg.sources.map((s, i) => (
                       <li key={i}>
-                        <strong>{s.filename}</strong> (score: {s.score})
+                        <div className="source-head">
+                          <strong>{s.filename}</strong>
+                          <span className="score">match {(s.score * 100).toFixed(0)}%</span>
+                        </div>
                         <p>{s.text}</p>
                       </li>
                     ))}
