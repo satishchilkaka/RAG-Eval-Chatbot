@@ -13,3 +13,8 @@ data/chroma/*
 
 .venv
 .env
+
+tests/__pycache__/
+tests/*.pyc
+tests/.pytest_cache/
+tests/test_case.csv
